@@ -1,8 +1,8 @@
-# S.U.S.H.I
+# S.U.S.H.I 🍣
 ![System Block Diagram](https://github.com/user-attachments/assets/0342a10b-6043-4a94-81f2-bc1c477583ba)
 **Surface Utilization Surveillance and Hazard Identification**
 
-## Goal of S.U.S.H.I
+## Goal of S.U.S.H.I 🍣 
 S.U.S.H.I aims to create a vision system for detecting floating surface trash with optimal accuracy, discarded objects, and similar objects that are outside the water area.
 
 ## Seeing the Water (U-Net)
