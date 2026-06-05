@@ -1,5 +1,4 @@
 # Welcome to The AISV Project 🛥️  
-- **Old name :** Seaclean Project  
 ![Screenshot from 2025-03-26 15-02-54](https://github.com/user-attachments/assets/0872a176-25d0-4048-b954-a6c3c23a1fc4)
 
 - **Robot 🍔:** Our BURGER ASV
