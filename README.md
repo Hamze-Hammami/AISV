@@ -4,7 +4,7 @@
 
   <img src="https://github.com/user-attachments/assets/0872a176-25d0-4048-b954-a6c3c23a1fc4" alt="AISV Robot" width="500"/>
 
-For more information check out the project page available on the portfolio: [AISV Portfolio Page](https://hamze-hammami.github.io/aisv.html?lang=en)
+For more information check out the project page available on my portfolio: [AISV Portfolio Page](https://hamze-hammami.github.io/aisv.html?lang=en)
 
 ---
 
