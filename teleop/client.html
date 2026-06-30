@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BURGER Control Centre</title>
+  <style>
+    body {text-align: center; background: #fffef2; color: #15464a;}
+    header {display: flex; align-items: center; justify-content: center;}
+    footer {margin-top: 100px;}
+    main, #info {display: flex; align-items: center; justify-content: space-evenly;}
+    #info {justify-content: space-evenly; margin-top: 40px;}
+    #video {width: 640px; height: 480px; border: 2px solid #15464a; border-radius: 10px;}
+    #left-bar, #right-bar { width: 64px; height: 200px; border: 4px #23303d solid; border-radius: 10px;}
+    #speed-bar { width: 180px; height: 64px; border: 4px #23303d solid; border-radius: 10px;}
+  </style>
+</head>
+<body>
+  
+  <header>
+    <img src="./logo.jpeg" alt="AISV" width="64px">
+    <h1>B.U.R.G.E.R Control Centre</h1>
+  </header>
+
+
+  <main>
+    <div id="left-bar"></div>
+    <img id="video" src="" />
+    <div id="right-bar"></div>
+  </main>
+  
+  <div id="info">
+    <h2 id="bucket-state">Bucket state: RAISED</h2>
+    <div id="speed-bar"></div>
+  </div>
+  
+  <footer>
+    © The AISV Project 2024 - 2025.
+  </footer>
+
+
+  <script>
+    // const ws = new WebSocket('ws://' + "10.6.147.176" + ':8899'); // Temp
+    // const ws = new WebSocket('ws://' + "192.168.10.25" + ':8899'); // idk
+    const ws = new WebSocket('ws://' + "192.168.0.167" + ':8899'); // Ahmed777
+    // const ws = new WebSocket('ws://' + "localhost" + ':8899'); // localhost
+    
+    const img = document.getElementById('video');
+
+    ws.onopen = () => {
+      console.log('WebSocket connection established');
+    };
+
+    ws.onmessage = (event) => {
+        // console.log(event);
+      if (event.data.startsWith('/9j/')) {
+        // Likely base64-encoded JPEG
+        img.src = 'data:image/jpeg;base64,' + event.data;
+      } else {
+        // console.log('Server:', event.data);
+      }
+    };
+
+    ws.onerror = (err) => {
+      console.error('WebSocket error:', err);
+    };
+
+    window.addEventListener("gamepadconnected", (e) => {
+      console.log(
+        "Gamepad connected at index %d: %s. %d buttons, %d axes.",
+        e.gamepad.index,
+        e.gamepad.id,
+        e.gamepad.buttons.length,
+        e.gamepad.axes.length,
+      );
+      inputLoop();
+    });
+
+    let speed_p = 0.1;
+    let lThrustBar = document.getElementById("left-bar");
+    let rThrustBar = document.getElementById("right-bar");
+    let speedBar = document.getElementById("speed-bar");
+    let bucketState = document.getElementById("bucket-state");
+    function inputLoop() {
+      const gamepads = navigator.getGamepads();
+      if (!gamepads) {
+        return;
+      }
+      const g = gamepads[0];
+
+      if (g.buttons[12].pressed) {
+        speed_p += 0.05;
+        console.log("new speed", speed_p);
+      } else if (g.buttons[13].pressed) {
+        speed_p -= 0.05;
+        console.log("new speed", speed_p);
+      } else if (g.buttons[0].pressed) {
+        if (ws) {
+          ws.send("1")
+          console.log("lowering bucket");
+          bucketState.innerText = "Bucket state: LOWERED";
+        }
+      } else if (g.buttons[3].pressed) {
+        if (ws) {
+          ws.send("2")
+          console.log("raising bucket");
+          bucketState.innerText = "Bucket state: RAISED";
+        }
+      }
+      
+      
+      let lThrust = Math.min(120, Math.max(60, Math.round((g.axes[1] * speed_p + 1) * 90)));
+      let rThrust = Math.min(120, Math.max(60, Math.round((g.axes[3] * speed_p + 1) * 90)));
+      
+      if (ws) {
+        console.log(`${lThrust},${rThrust}`);
+        ws.send(`t-${lThrust},${rThrust}`);
+      }
+      
+      let lColor = g.axes[1] >= 0 ? "d8807d" : "c4d7e6";
+      let lPercent = Math.abs(g.axes[1])*100;
+      lThrustBar.style = `background:linear-gradient(to top, #${lColor} 0, #${lColor} ${lPercent}%, #23303d ${lPercent}%, #23303d 0%);`
+      
+      let rColor = g.axes[3] >= 0 ? "d8807d" : "c4d7e6";
+      let rPercent = Math.abs(g.axes[3])*100;
+      rThrustBar.style = `background:linear-gradient(to top, #${rColor} 0, #${rColor} ${rPercent}%, #23303d ${rPercent}%, #23303d 0%);`
+      
+      let speed_val = speed_p * 200;
+      speedBar.style = `background:linear-gradient(to right, green 0, green ${speed_val}%, #23303d ${speed_val}%, #23303d 0%);`
+
+      // X - 0
+      // O - 1
+      // []- 2
+      // triangle - 3
+
+      // console.log(g.buttons.filter((b, i)=>{
+      //   if (b.pressed == 1) {
+      //     console.log(i);
+      //   }
+      //   return (b.pressed == 1);
+      // }))
+
+      setTimeout(inputLoop, 200);
+      // requestAnimationFrame(inputLoop);
+    }
+
+  </script>
+</body>
+</html>
